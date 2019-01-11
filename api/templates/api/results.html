@@ -1,0 +1,197 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Django Highcharts Example</title>
+</head>
+
+<style>
+    .chart-container {
+        position: relative;
+        margin: auto;
+        height: 80vh;
+        width: 80vw;
+    }
+</style>
+
+<body>
+    <div id="container"></div>
+
+    <!-- <script src="//static.codepen.io/assets/common/stopExecutionOnTimeout-b2a7b3fe212eaa732349046d8416e00a9dec26eb7fd347590fbced3ab38af52e.js"></script> -->
+    <!-- <script src="https://code.highcharts.com/highcharts.src.js"></script>
+        <script>
+            var results = '{{results}}';
+            var data = JSON.parse(results);
+            Highcharts.chart('container', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Ride Request Prediction for the next 24 hours'
+                },
+                xAxis: {
+                    categories: ['1:AM', '2:AM', '3:AM', '4:AM', '5:AM', '6:AM','7:AM','8:AM','9:AM','10:AM','11:AM','12:PM','1:PM','2:PM','3:PM','4:PM','5:PM','6:PM','7:PM','8:PM','9:PM','10:PM','11:PM','12:PM']
+                },
+                series: [{
+                    name : 'Requests',
+                    data: data[0],
+                }]
+            });
+        </script> -->
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script>
+        var mytasks = new Promise(function (resolve, reject) {
+            // do a thing, possibly async, then…
+            var predicted = '{{results}}'
+            var actual = '{{actual_data}}'
+            var region_variable = '{{region_variable}}';
+            var predicted_data = JSON.parse(predicted);
+            var actual_data = JSON.parse(actual);
+            // var ctx = document.getElementById("myChart").getContext('2d');
+
+            function rndColor() {
+                return '#' + ('00000' + (Math.random() * (1 << 25)).toString(16)).substr(-6);
+            }
+
+            colors = []
+
+            for (let index = 0; index < predicted_data[0].length; index++) {
+                colors.push(rndColor());
+            }
+
+            // var myChart = new Chart(ctx, {
+            //     type: 'bar',
+            //     data: {
+            //         labels: ['1:AM', '2:AM', '3:AM', '4:AM', '5:AM', '6:AM', '7:AM', '8:AM', '9:AM', '10:AM', '11:AM', '12:PM', '1:PM', '2:PM', '3:PM', '4:PM', '5:PM', '6:PM', '7:PM', '8:PM', '9:PM', '10:PM', '11:PM', '12:PM'],
+            //         datasets: [{
+            //             label: 'Requests for the next day for the selected'+' '+region_variable+' '+'region',
+            //             data: data[0],
+            //             backgroundColor: colors,
+            //             borderColor: colors.reverse(),
+            //             borderWidth: 1
+            //         }]
+            //     },
+            //     options: {
+            //         scales: {
+            //             yAxes: [{
+            //                 ticks: {
+            //                     beginAtZero: true
+            //                 }
+            //             }]
+            //         }
+            //     }
+            // });
+
+
+            Chart.defaults.global.defaultFontFamily = "Lato";
+            Chart.defaults.global.defaultFontSize = 18;
+
+            var predictedData = {
+                label: 'Request Predicted Data',
+                data: predicted_data[0],
+                // data: [1, 0, 0, 0, 0, 0, 0, 2, 3, 3, 7, 6, 3, 4, 7, 9, 10, 6, 4, 6, 6, 0, 1, 4],
+                backgroundColor: "#1624fd",
+                borderWidth: 0,
+                yAxisID: "y-axis-predicted",
+                fill: false
+            };
+
+            var actualData = {
+                label: 'Actual Predicted Data',
+                data: actual_data,
+                // data: [6, 3, 4, 2, 5, 2, 3, 4, 4, 3, 4, 5, 2, 6, 5, 5, 1, 4, 3, 2, 3, 4, 2, 3],
+                backgroundColor: "#16f741",
+                borderWidth: 0,
+                yAxisID: "y-axis-actual",
+                fill:false
+            };
+
+            var requestData = {
+                // labels: ["Mercury", "Venus", "Earth", "Mars", "Jupiter", "Saturn", "Uranus", "Neptune"],
+                labels: ['1:AM', '2:AM', '3:AM', '4:AM', '5:AM', '6:AM', '7:AM', '8:AM', '9:AM', '10:AM', '11:AM', '12:PM', '1:PM', '2:PM', '3:PM', '4:PM', '5:PM', '6:PM', '7:PM', '8:PM', '9:PM', '10:PM', '11:PM', '12:PM'],
+                datasets: [predictedData, actualData]
+            };
+
+            var chartOptions = {
+                scales: {
+                    xAxes: [{
+                        barPercentage: 1,
+                        categoryPercentage: 0.6,
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                            max: 100,
+                            min: 0,
+                            stepSize: 5
+                        },
+                        id: "y-axis-predicted"
+                    }, {
+                        id: "y-axis-actual",
+                        display: true,
+                            position: 'left',
+                            ticks: {
+                                beginAtZero: true,
+                                max: 100,
+                                min: 0,
+                                stepSize: 5
+                            }
+                    
+                    }]
+                },
+
+                title: {
+                    display: true,
+                    text: 'Ride Request Prediction for the next day of'+' '+region_variable
+                }
+            };
+
+            if (requestData !== null && chartOptions !== null) {
+                resolve([requestData, chartOptions]);
+            }
+            else {
+                reject(Error("It broke"));
+            }
+        });
+        // var results = '{{results}}';
+
+        //print(barChart.data);
+        mytasks.then(function (result) {
+            var densityCanvas = document.getElementById("myChart");
+            console.log(result); // "Stuff worked!"
+            var barChart = new Chart(densityCanvas, {
+                type: 'line',
+                data: result[0],
+                options: result[1]
+                
+            });
+
+        }, function (err) {
+            console.log(err); // Error: "It broke"
+        });
+
+
+
+    </script>
+</body>
+
+</html>
+
+
+
+
+
+
+<!-- <option value="">---------</option>
+{% for city in cities %}
+<option value="{{ city.pk }}">{{ city.name }}</option>
+{% endfor %} -->

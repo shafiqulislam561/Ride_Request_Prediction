@@ -1,0 +1,26 @@
+{% extends 'api/base.html'   %}
+
+{% block content  %}
+
+<h1> The data has been preprocessed for the selected region</h1>
+<!-- {{df}} -->
+<form method="POST" class ="post-form" action="predict/">{% csrf_token  %}
+    
+    
+    <!-- {% for region in regions %}
+    <option value="{{ region.pk }}">{{ region.region_name }}</option>
+    {% endfor %}
+     -->
+
+     <!-- {{regions}} -->
+    
+     <button type="submit" class="save btn btn-default">Click here to start prediction</button>
+</form>
+
+{% endblock %}
+
+
+<!-- <option value="">---------</option>
+{% for city in cities %}
+<option value="{{ city.pk }}">{{ city.name }}</option>
+{% endfor %} -->

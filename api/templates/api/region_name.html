@@ -1,0 +1,24 @@
+{% extends 'api/base.html'   %}
+
+{% block content  %}
+
+<h1> Ride Request Prediction Pannel </h1>
+<form method="POST" class ="post-form" action="neuralnets/preprocessdata/">{% csrf_token  %}
+    {{form.as_p}}
+    
+    <!-- {% for region in regions %}
+    <option value="{{ region.pk }}">{{ region.region_name }}</option>
+    {% endfor %}
+     -->
+
+     <!-- {{regions}} -->
+    
+     <button type="submit" class="save btn btn-default">Save</button>
+</form>
+{% endblock %}
+
+
+<!-- <option value="">---------</option>
+{% for city in cities %}
+<option value="{{ city.pk }}">{{ city.name }}</option>
+{% endfor %} -->
